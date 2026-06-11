@@ -15,6 +15,11 @@ import { StatusBar } from 'expo-status-bar';
 
 const MOCKAPI_URL = 'https://6a2b396cb687a7d5cbc4fa03.mockapi.io/materiais';
 
+function normalizarQuantidade(valor) {
+  const numero = Number(valor);
+  return Number.isFinite(numero) ? numero : 0;
+}
+
 export default function App() {
   const [nome, setNome] = useState('');
   const [quantidade, setQuantidade] = useState('');
@@ -50,7 +55,7 @@ export default function App() {
 
   async function cadastrarMaterial() {
     const nomeTratado = nome.trim();
-    const quantidadeTratada = Number(quantidade);
+    const quantidadeTratada = normalizarQuantidade(quantidade);
 
     if (!nomeTratado || !quantidadeTratada || quantidadeTratada <= 0) {
       setMensagem('Informe nome e quantidade maior que zero.');
@@ -104,12 +109,12 @@ export default function App() {
   }, [busca, materiais]);
 
   const totalQuantidade = materiais.reduce(
-    (total, material) => total + Number(material.quantidade || 0),
+    (total, material) => total + normalizarQuantidade(material.quantidade),
     0
   );
 
   function renderMaterial({ item }) {
-    const quantidadeAtual = Number(item.quantidade || 0);
+    const quantidadeAtual = normalizarQuantidade(item.quantidade);
     const zerado = quantidadeAtual === 0;
 
     return (
