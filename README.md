@@ -71,6 +71,12 @@ Execute os testes automatizados:
 npm test
 ```
 
+## Estrutura principal
+
+- `App.js`: tela principal com formulario, busca, totalizadores, GET e POST.
+- `src/utils/validacoes.js`: funcao `validarRetirada` usada para validar baixas de estoque.
+- `__tests__/`: testes automatizados das sprints.
+
 ## Contrato tecnico
 
 Componentes obrigatorios implementados:
