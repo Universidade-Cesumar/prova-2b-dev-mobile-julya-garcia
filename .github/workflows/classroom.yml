@@ -1,32 +1,30 @@
-name: GitHub Classroom Autograding
-on: [push]
-
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
 permissions:
   checks: write
   actions: read
   contents: read
-
 jobs:
   run-autograding-tests:
     runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
     steps:
-      - name: Checkout código do aluno
-        uses: actions/checkout@v4
-
-      - name: Configurar o Node.js Estável (v20)
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Instalar Dependências (Ignorando Peer Conflicts)
-        run: npm install --legacy-peer-deps
-
-      - name: Executar Bateria de Testes das Sprints
-        uses: classroom-resources/autograding-command-grader@v1
-        with:
-          test-name: "Testes de Componentes e Regras - Insumos"
-          setup-command: "npm install --legacy-peer-deps"
-          command: "npm test"
-          timeout: 5
-          max-score: 6
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Testes de Componentes e Regras - Insumos
+      id: testes-de-componentes-e-regras-insumos
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Testes de Componentes e Regras - Insumos
+        setup-command: npm install --legacy-peer-deps
+        command: npm test
+        timeout: 5
+        max-score: 6
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TESTES-DE-COMPONENTES-E-REGRAS-INSUMOS_RESULTS: "${{steps.testes-de-componentes-e-regras-insumos.outputs.result}}"
+      with:
+        runners: testes-de-componentes-e-regras-insumos
