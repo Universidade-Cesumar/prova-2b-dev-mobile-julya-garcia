@@ -1,46 +1,388 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+
+const MOCKAPI_URL = 'https://6a2b396cb687a7d5cbc4fa03.mockapi.io/materiais';
 
 export default function App() {
-  // --- Estados da Aplicação (Os alunos implementarão aqui) ---
+  const [nome, setNome] = useState('');
+  const [quantidade, setQuantidade] = useState('');
+  const [busca, setBusca] = useState('');
+  const [materiais, setMateriais] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
+  const [mensagem, setMensagem] = useState('');
 
-  // --- Funções de Requisição e Efeitos (Os alunos implementarão aqui) ---
+  useEffect(() => {
+    carregarMateriais();
+  }, []);
+
+  async function carregarMateriais() {
+    setCarregando(true);
+    setMensagem('');
+
+    try {
+      const resposta = await fetch(MOCKAPI_URL);
+
+      if (!resposta.ok) {
+        throw new Error('Nao foi possivel carregar os materiais.');
+      }
+
+      const dados = await resposta.json();
+      setMateriais(Array.isArray(dados) ? dados : []);
+    } catch (error) {
+      setMensagem('Nao foi possivel carregar o estoque.');
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  async function cadastrarMaterial() {
+    const nomeTratado = nome.trim();
+    const quantidadeTratada = Number(quantidade);
+
+    if (!nomeTratado || !quantidadeTratada || quantidadeTratada <= 0) {
+      setMensagem('Informe nome e quantidade maior que zero.');
+      return;
+    }
+
+    const novoMaterial = {
+      nome: nomeTratado,
+      quantidade: quantidadeTratada,
+      categoria: 'Consumo',
+    };
+
+    setSalvando(true);
+    setMensagem('');
+
+    try {
+      const resposta = await fetch(MOCKAPI_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(novoMaterial),
+      });
+
+      if (!resposta.ok) {
+        throw new Error('Nao foi possivel cadastrar o material.');
+      }
+
+      const materialCriado = await resposta.json();
+      setMateriais((listaAtual) => [materialCriado, ...listaAtual]);
+      setNome('');
+      setQuantidade('');
+      setMensagem('Material cadastrado com sucesso.');
+    } catch (error) {
+      setMensagem('Erro ao cadastrar. Verifique a MockAPI.');
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  const materiaisFiltrados = useMemo(() => {
+    const termo = busca.trim().toLowerCase();
+
+    if (!termo) {
+      return materiais;
+    }
+
+    return materiais.filter((material) =>
+      String(material.nome || '').toLowerCase().includes(termo)
+    );
+  }, [busca, materiais]);
+
+  const totalQuantidade = materiais.reduce(
+    (total, material) => total + Number(material.quantidade || 0),
+    0
+  );
+
+  function renderMaterial({ item }) {
+    const quantidadeAtual = Number(item.quantidade || 0);
+    const zerado = quantidadeAtual === 0;
+
+    return (
+      <View style={styles.item}>
+        <View style={styles.itemTextos}>
+          <Text style={styles.itemNome}>{item.nome}</Text>
+          <Text style={styles.itemDetalhe}>{item.categoria || 'Sem categoria'}</Text>
+        </View>
+        <View style={[styles.quantidadeBadge, zerado && styles.quantidadeZerada]}>
+          <Text style={[styles.quantidadeTexto, zerado && styles.quantidadeTextoZerada]}>
+            {quantidadeAtual}
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Almoxarifado - Enfermagem</Text>
-      
-      {/* Breve descrição do projeto inserida abaixo */}
-      <Text style={styles.description}>
-        Este template servirá para desenvolver o projeto responsável por modernizar o controle de insumos médicos do almoxarifado. 
-        Através desta interface conectada à API, é possível realizar o inventário em tempo real, cadastrar novos materiais e registrar baixas de estoque de forma ágil e segura.
-      </Text>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="dark" />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.container}
+      >
+        <View style={styles.header}>
+          <Text style={styles.title}>Almoxarifado</Text>
+          <Text style={styles.subtitle}>Enfermagem</Text>
+        </View>
 
-      {/* Os alunos vão construir os componentes visuais das Sprints aqui dentro */}
-      
-    </View>
+        <View style={styles.resumo}>
+          <View style={styles.resumoBloco}>
+            <Text style={styles.resumoLabel}>Itens</Text>
+            <Text testID="total-itens" style={styles.resumoValor}>
+              {materiais.length}
+            </Text>
+          </View>
+          <View style={styles.resumoBloco}>
+            <Text style={styles.resumoLabel}>Unidades</Text>
+            <Text style={styles.resumoValor}>{totalQuantidade}</Text>
+          </View>
+        </View>
+
+        <View style={styles.formulario}>
+          <TextInput
+            testID="input-nome"
+            style={styles.input}
+            placeholder="Nome do material"
+            placeholderTextColor="#7a8491"
+            value={nome}
+            onChangeText={setNome}
+          />
+
+          <TextInput
+            testID="input-quantidade"
+            style={styles.input}
+            placeholder="Quantidade"
+            placeholderTextColor="#7a8491"
+            value={quantidade}
+            onChangeText={setQuantidade}
+            keyboardType="numeric"
+          />
+
+          <TouchableOpacity
+            testID="btn-cadastrar"
+            style={[styles.botao, salvando && styles.botaoDesativado]}
+            onPress={cadastrarMaterial}
+            disabled={salvando}
+            activeOpacity={0.82}
+          >
+            <Text style={styles.botaoTexto}>{salvando ? 'Cadastrando...' : 'Cadastrar'}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <TextInput
+          testID="input-busca"
+          style={styles.inputBusca}
+          placeholder="Buscar material"
+          placeholderTextColor="#7a8491"
+          value={busca}
+          onChangeText={setBusca}
+        />
+
+        {mensagem ? <Text style={styles.mensagem}>{mensagem}</Text> : null}
+
+        {carregando ? (
+          <View style={styles.loadingLinha}>
+            <ActivityIndicator color="#0f766e" />
+            <Text style={styles.loadingTexto}>Carregando estoque...</Text>
+          </View>
+        ) : null}
+
+        <View testID="lista-materials" style={styles.listaCompatibilidade}>
+          <FlatList
+            testID="lista-materiais"
+            data={materiaisFiltrados}
+            keyExtractor={(item, index) => String(item.id || index)}
+            renderItem={renderMaterial}
+            contentContainerStyle={styles.listaConteudo}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <Text style={styles.listaVazia}>Nenhum material encontrado.</Text>
+            }
+          />
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#eef4f3',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    paddingTop: 50,
     paddingHorizontal: 20,
+    paddingTop: 22,
+    paddingBottom: 16,
+  },
+  header: {
+    marginBottom: 16,
   },
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10, // Reduzido ligeiramente para aproximar o texto explicativo
-    color: '#333',
+    color: '#102a43',
+    fontSize: 28,
+    fontWeight: '800',
   },
-  description: {
-    fontSize: 14,
-    color: '#666',
+  subtitle: {
+    color: '#486581',
+    fontSize: 16,
+    marginTop: 2,
+  },
+  resumo: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 14,
+  },
+  resumoBloco: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#d9e2ec',
+  },
+  resumoLabel: {
+    color: '#627d98',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  resumoValor: {
+    color: '#102a43',
+    fontSize: 24,
+    fontWeight: '800',
+    marginTop: 4,
+  },
+  formulario: {
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#d9e2ec',
+    marginBottom: 12,
+  },
+  input: {
+    minHeight: 46,
+    borderWidth: 1,
+    borderColor: '#bcccdc',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    color: '#102a43',
+    backgroundColor: '#f8fafc',
+    marginBottom: 10,
+    fontSize: 15,
+  },
+  botao: {
+    minHeight: 48,
+    borderRadius: 8,
+    backgroundColor: '#0f766e',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  botaoDesativado: {
+    opacity: 0.65,
+  },
+  botaoTexto: {
+    color: '#ffffff',
+    fontWeight: '800',
+    fontSize: 16,
+  },
+  inputBusca: {
+    minHeight: 46,
+    borderWidth: 1,
+    borderColor: '#bcccdc',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    color: '#102a43',
+    backgroundColor: '#ffffff',
+    marginBottom: 8,
+    fontSize: 15,
+  },
+  mensagem: {
+    color: '#334e68',
+    fontSize: 13,
+    marginBottom: 8,
+  },
+  loadingLinha: {
+    minHeight: 34,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  loadingTexto: {
+    color: '#486581',
+  },
+  listaCompatibilidade: {
+    flex: 1,
+  },
+  listaConteudo: {
+    paddingBottom: 22,
+  },
+  item: {
+    minHeight: 70,
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#d9e2ec',
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  itemTextos: {
+    flex: 1,
+    paddingRight: 12,
+  },
+  itemNome: {
+    color: '#102a43',
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  itemDetalhe: {
+    color: '#627d98',
+    fontSize: 13,
+    marginTop: 4,
+  },
+  quantidadeBadge: {
+    minWidth: 54,
+    minHeight: 38,
+    borderRadius: 8,
+    backgroundColor: '#e0f2f1',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
+  quantidadeZerada: {
+    backgroundColor: '#ffe4e6',
+  },
+  quantidadeTexto: {
+    color: '#0f766e',
+    fontWeight: '800',
+    fontSize: 16,
+  },
+  quantidadeTextoZerada: {
+    color: '#be123c',
+  },
+  listaVazia: {
+    color: '#627d98',
     textAlign: 'center',
-    lineHeight: 20, // Dá um espaçamento confortável entre as linhas do parágrafo
-    marginBottom: 30, // Margem inferior para afastar o texto dos futuros inputs dos alunos
-  }
+    marginTop: 28,
+  },
 });
