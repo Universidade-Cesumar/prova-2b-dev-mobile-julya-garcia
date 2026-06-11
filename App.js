@@ -4,6 +4,7 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  RefreshControl,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -227,6 +228,14 @@ export default function App() {
             keyExtractor={(item, index) => String(item.id || index)}
             renderItem={renderMaterial}
             contentContainerStyle={styles.listaConteudo}
+            refreshControl={
+              <RefreshControl
+                refreshing={carregando}
+                onRefresh={carregarMateriais}
+                colors={['#0f766e']}
+                tintColor="#0f766e"
+              />
+            }
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={
               <Text style={styles.listaVazia}>Nenhum material encontrado.</Text>
