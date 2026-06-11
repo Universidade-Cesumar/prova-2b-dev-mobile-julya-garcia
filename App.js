@@ -21,6 +21,10 @@ function normalizarQuantidade(valor) {
   return Number.isFinite(numero) ? numero : 0;
 }
 
+function ordenarMateriais(lista) {
+  return [...lista].sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
+}
+
 export default function App() {
   const [nome, setNome] = useState('');
   const [quantidade, setQuantidade] = useState('');
@@ -46,7 +50,7 @@ export default function App() {
       }
 
       const dados = await resposta.json();
-      setMateriais(Array.isArray(dados) ? dados : []);
+      setMateriais(Array.isArray(dados) ? ordenarMateriais(dados) : []);
     } catch (error) {
       setMensagem('Nao foi possivel carregar o estoque.');
     } finally {
