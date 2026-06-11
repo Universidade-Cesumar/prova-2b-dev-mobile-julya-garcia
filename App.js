@@ -113,6 +113,10 @@ export default function App() {
     0
   );
 
+  const itensZerados = materiais.filter(
+    (material) => normalizarQuantidade(material.quantidade) === 0
+  ).length;
+
   function renderMaterial({ item }) {
     const quantidadeAtual = normalizarQuantidade(item.quantidade);
     const zerado = quantidadeAtual === 0;
@@ -154,6 +158,10 @@ export default function App() {
           <View style={styles.resumoBloco}>
             <Text style={styles.resumoLabel}>Unidades</Text>
             <Text style={styles.resumoValor}>{totalQuantidade}</Text>
+          </View>
+          <View style={styles.resumoBloco}>
+            <Text style={styles.resumoLabel}>Zerados</Text>
+            <Text style={[styles.resumoValor, styles.resumoAlerta]}>{itensZerados}</Text>
           </View>
         </View>
 
@@ -271,6 +279,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '800',
     marginTop: 4,
+  },
+  resumoAlerta: {
+    color: '#be123c',
   },
   formulario: {
     backgroundColor: '#ffffff',
