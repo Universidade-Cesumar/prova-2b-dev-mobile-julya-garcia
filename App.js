@@ -207,6 +207,12 @@ export default function App() {
 
         {mensagem ? <Text style={styles.mensagem}>{mensagem}</Text> : null}
 
+        {itensZerados > 0 ? (
+          <Text style={styles.alertaEstoque}>
+            {itensZerados} item(ns) precisam de reposicao.
+          </Text>
+        ) : null}
+
         {carregando ? (
           <View style={styles.loadingLinha}>
             <ActivityIndicator color="#0f766e" />
@@ -331,6 +337,18 @@ const styles = StyleSheet.create({
   mensagem: {
     color: '#334e68',
     fontSize: 13,
+    marginBottom: 8,
+  },
+  alertaEstoque: {
+    color: '#9f1239',
+    backgroundColor: '#ffe4e6',
+    borderWidth: 1,
+    borderColor: '#fecdd3',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    fontSize: 13,
+    fontWeight: '700',
     marginBottom: 8,
   },
   loadingLinha: {
