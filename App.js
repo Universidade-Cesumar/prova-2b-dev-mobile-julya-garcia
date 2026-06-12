@@ -25,6 +25,18 @@ function ordenarMateriais(lista) {
   return [...lista].sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
 }
 
+function obterStatusEstoque(quantidade) {
+  if (quantidade === 0) {
+    return 'Zerado';
+  }
+
+  if (quantidade <= 5) {
+    return 'Baixo estoque';
+  }
+
+  return 'Disponivel';
+}
+
 export default function App() {
   const [nome, setNome] = useState('');
   const [quantidade, setQuantidade] = useState('');
@@ -129,12 +141,15 @@ export default function App() {
   function renderMaterial({ item }) {
     const quantidadeAtual = normalizarQuantidade(item.quantidade);
     const zerado = quantidadeAtual === 0;
+    const statusEstoque = obterStatusEstoque(quantidadeAtual);
 
     return (
       <View style={styles.item}>
         <View style={styles.itemTextos}>
           <Text style={styles.itemNome}>{item.nome}</Text>
-          <Text style={styles.itemDetalhe}>{item.categoria || 'Sem categoria'}</Text>
+          <Text style={styles.itemDetalhe}>
+            {item.categoria || 'Sem categoria'} - {statusEstoque}
+          </Text>
         </View>
         <View style={[styles.quantidadeBadge, zerado && styles.quantidadeZerada]}>
           <Text style={[styles.quantidadeTexto, zerado && styles.quantidadeTextoZerada]}>
