@@ -14,6 +14,14 @@ O sistema permite visualizar o inventario atual em uma lista com rolagem, buscar
 - Totalizador de itens e unidades em estoque.
 - Funcao de validacao para retirada de estoque.
 
+## Uso basico
+
+1. Abra o aplicativo pelo Expo Go.
+2. Aguarde o carregamento do estoque vindo da MockAPI.
+3. Digite o nome do material no campo de busca para filtrar a lista.
+4. Informe nome e quantidade para cadastrar um novo insumo.
+5. Confira o material novo aparecendo no topo da lista.
+
 ## Tecnologias
 
 - React Native
