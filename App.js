@@ -101,6 +101,10 @@ export default function App() {
     }
   }
 
+  function atualizarQuantidade(valor) {
+    setQuantidade(valor.replace(/\D/g, ''));
+  }
+
   const materiaisFiltrados = useMemo(() => {
     const termo = busca.trim().toLowerCase();
 
@@ -186,7 +190,7 @@ export default function App() {
             placeholder="Quantidade"
             placeholderTextColor="#7a8491"
             value={quantidade}
-            onChangeText={setQuantidade}
+            onChangeText={atualizarQuantidade}
             keyboardType="numeric"
           />
 
