@@ -229,6 +229,10 @@ export default function App() {
           onChangeText={setBusca}
         />
 
+        <Text style={styles.resultadoBusca}>
+          Mostrando {materiaisFiltrados.length} de {materiais.length} material(is).
+        </Text>
+
         {mensagem ? <Text style={styles.mensagem}>{mensagem}</Text> : null}
 
         {itensZerados > 0 ? (
@@ -365,6 +369,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     marginBottom: 8,
     fontSize: 15,
+  },
+  resultadoBusca: {
+    color: '#627d98',
+    fontSize: 13,
+    marginBottom: 8,
   },
   mensagem: {
     color: '#334e68',
