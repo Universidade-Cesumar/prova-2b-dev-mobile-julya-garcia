@@ -93,3 +93,10 @@ Componentes obrigatorios implementados:
 - `TextInput` da quantidade: `testID="input-quantidade"` com `keyboardType="numeric"`
 - Botao de cadastro: `testID="btn-cadastrar"`
 - Lista de materiais: `testID="lista-materiais"`
+
+## Criterios atendidos
+
+- Interface mobile com campos obrigatorios e lista rolavel.
+- `useEffect` carregando o estoque com `GET` ao abrir o aplicativo.
+- Cadastro de material enviando JSON com `POST` para a MockAPI.
+- Documentacao com tecnologias, endpoint e instrucoes de execucao.
