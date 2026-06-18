@@ -124,6 +124,8 @@ Componentes obrigatorios implementados:
 - Botao de baixa: `testID="btn-baixar"`
 - Botao de exclusao: `testID="btn-excluir"`
 
+Esses identificadores sao mantidos exatamente como solicitado para o autograding.
+
 ## Criterios atendidos
 
 - Interface mobile com campos obrigatorios e lista rolavel.
