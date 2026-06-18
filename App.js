@@ -44,6 +44,14 @@ function montarChaveProcessamento(acao, id) {
   return `${acao}-${id}`;
 }
 
+function criarMaterialCadastro(nome, quantidade) {
+  return {
+    nome,
+    quantidade,
+    categoria: CATEGORIA_PADRAO,
+  };
+}
+
 function obterStatusEstoque(quantidade) {
   if (quantidade === 0) {
     return 'Zerado';
@@ -101,11 +109,7 @@ export default function App() {
       return;
     }
 
-    const novoMaterial = {
-      nome: nomeTratado,
-      quantidade: quantidadeTratada,
-      categoria: CATEGORIA_PADRAO,
-    };
+    const novoMaterial = criarMaterialCadastro(nomeTratado, quantidadeTratada);
 
     setSalvando(true);
     setMensagem('');
