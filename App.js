@@ -194,6 +194,14 @@ export default function App() {
     }));
   }
 
+  function removerRetirada(id) {
+    setRetiradas((valoresAtuais) => {
+      const novosValores = { ...valoresAtuais };
+      delete novosValores[id];
+      return novosValores;
+    });
+  }
+
   async function baixarMaterial(item) {
     const estoqueAtual = normalizarQuantidade(item.quantidade);
     const quantidadeRetirada = normalizarQuantidade(retiradas[item.id]);
@@ -255,11 +263,7 @@ export default function App() {
       setMateriais((listaAtual) =>
         listaAtual.filter((material) => material.id !== item.id)
       );
-      setRetiradas((valoresAtuais) => {
-        const novosValores = { ...valoresAtuais };
-        delete novosValores[item.id];
-        return novosValores;
-      });
+      removerRetirada(item.id);
       setMensagem('Material excluido com sucesso.');
     } catch (error) {
       setMensagem('Erro ao excluir. Verifique a MockAPI.');
