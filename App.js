@@ -271,9 +271,9 @@ export default function App() {
 
           <TouchableOpacity
             testID="btn-baixar"
-            style={[styles.botaoBaixar, baixando && styles.botaoDesativado]}
+            style={[styles.botaoBaixar, (baixando || zerado) && styles.botaoDesativado]}
             onPress={() => baixarMaterial(item)}
-            disabled={baixando || excluindo}
+            disabled={baixando || excluindo || zerado}
             activeOpacity={0.82}
           >
             <Text style={styles.botaoAcaoTexto}>{baixando ? '...' : 'Baixar'}</Text>
