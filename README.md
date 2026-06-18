@@ -73,6 +73,8 @@ Na exclusao, o aplicativo remove o registro pelo endpoint:
 DELETE https://6a2b396cb687a7d5cbc4fa03.mockapi.io/materiais/:id
 ```
 
+As duas operacoes atualizam a interface local apos a resposta da MockAPI.
+
 ## Como rodar
 
 Instale as dependencias:
