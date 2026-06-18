@@ -14,7 +14,13 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
+const { validarRetirada } = require('./src/utils/validacoes');
+
 const MOCKAPI_URL = 'https://6a2b396cb687a7d5cbc4fa03.mockapi.io/materiais';
+
+const estoqueInicial = [
+  { id: 'demo-1', nome: 'Luva de procedimento', quantidade: 120, categoria: 'Consumo' },
+];
 
 function normalizarQuantidade(valor) {
   const numero = Number(valor);
@@ -41,9 +47,11 @@ export default function App() {
   const [nome, setNome] = useState('');
   const [quantidade, setQuantidade] = useState('');
   const [busca, setBusca] = useState('');
-  const [materiais, setMateriais] = useState([]);
+  const [materiais, setMateriais] = useState(estoqueInicial);
+  const [retiradas, setRetiradas] = useState({});
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
+  const [processandoItem, setProcessandoItem] = useState('');
   const [mensagem, setMensagem] = useState('');
 
   useEffect(() => {
@@ -64,6 +72,7 @@ export default function App() {
       const dados = await resposta.json();
       setMateriais(Array.isArray(dados) ? ordenarMateriais(dados) : []);
     } catch (error) {
+      setMateriais((listaAtual) => (listaAtual.length ? listaAtual : estoqueInicial));
       setMensagem('Nao foi possivel carregar o estoque.');
     } finally {
       setCarregando(false);
@@ -117,6 +126,90 @@ export default function App() {
     setQuantidade(valor.replace(/\D/g, ''));
   }
 
+  function atualizarRetirada(id, valor) {
+    setRetiradas((valoresAtuais) => ({
+      ...valoresAtuais,
+      [id]: valor.replace(/\D/g, ''),
+    }));
+  }
+
+  async function baixarMaterial(item) {
+    const estoqueAtual = normalizarQuantidade(item.quantidade);
+    const quantidadeRetirada = normalizarQuantidade(retiradas[item.id]);
+
+    if (!validarRetirada(estoqueAtual, quantidadeRetirada)) {
+      setMensagem('Retirada invalida. Confira a quantidade em estoque.');
+      return;
+    }
+
+    const materialAtualizado = {
+      ...item,
+      quantidade: estoqueAtual - quantidadeRetirada,
+    };
+
+    setProcessandoItem(`baixar-${item.id}`);
+    setMensagem('');
+
+    try {
+      const resposta = await fetch(`${MOCKAPI_URL}/${item.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(materialAtualizado),
+      });
+
+      if (!resposta.ok) {
+        throw new Error('Nao foi possivel baixar o estoque.');
+      }
+
+      const materialSalvo = await resposta.json();
+      setMateriais((listaAtual) =>
+        listaAtual.map((material) =>
+          material.id === item.id ? { ...materialAtualizado, ...materialSalvo } : material
+        )
+      );
+      setRetiradas((valoresAtuais) => ({
+        ...valoresAtuais,
+        [item.id]: '',
+      }));
+      setMensagem('Baixa registrada com sucesso.');
+    } catch (error) {
+      setMensagem('Erro ao baixar estoque. Verifique a MockAPI.');
+    } finally {
+      setProcessandoItem('');
+    }
+  }
+
+  async function excluirMaterial(item) {
+    setProcessandoItem(`excluir-${item.id}`);
+    setMensagem('');
+
+    try {
+      const resposta = await fetch(`${MOCKAPI_URL}/${item.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!resposta.ok) {
+        throw new Error('Nao foi possivel excluir o material.');
+      }
+
+      setMateriais((listaAtual) =>
+        listaAtual.filter((material) => material.id !== item.id)
+      );
+      setRetiradas((valoresAtuais) => {
+        const novosValores = { ...valoresAtuais };
+        delete novosValores[item.id];
+        return novosValores;
+      });
+      setMensagem('Material excluido com sucesso.');
+    } catch (error) {
+      setMensagem('Erro ao excluir. Verifique a MockAPI.');
+    } finally {
+      setProcessandoItem('');
+    }
+  }
+
   const materiaisFiltrados = useMemo(() => {
     const termo = busca.trim().toLowerCase();
 
@@ -142,19 +235,55 @@ export default function App() {
     const quantidadeAtual = normalizarQuantidade(item.quantidade);
     const zerado = quantidadeAtual === 0;
     const statusEstoque = obterStatusEstoque(quantidadeAtual);
+    const baixando = processandoItem === `baixar-${item.id}`;
+    const excluindo = processandoItem === `excluir-${item.id}`;
 
     return (
       <View style={styles.item}>
-        <View style={styles.itemTextos}>
-          <Text style={styles.itemNome}>{item.nome}</Text>
-          <Text style={styles.itemDetalhe}>
-            {item.categoria || 'Sem categoria'} - {statusEstoque}
-          </Text>
+        <View style={styles.itemTopo}>
+          <View style={styles.itemTextos}>
+            <Text style={styles.itemNome}>{item.nome}</Text>
+            <Text style={styles.itemDetalhe}>
+              {item.categoria || 'Sem categoria'} - {statusEstoque}
+            </Text>
+          </View>
+          <View style={[styles.quantidadeBadge, zerado && styles.quantidadeZerada]}>
+            <Text style={[styles.quantidadeTexto, zerado && styles.quantidadeTextoZerada]}>
+              {quantidadeAtual}
+            </Text>
+          </View>
         </View>
-        <View style={[styles.quantidadeBadge, zerado && styles.quantidadeZerada]}>
-          <Text style={[styles.quantidadeTexto, zerado && styles.quantidadeTextoZerada]}>
-            {quantidadeAtual}
-          </Text>
+
+        <View style={styles.retiradaLinha}>
+          <TextInput
+            testID="input-retirada"
+            style={styles.inputRetirada}
+            placeholder="Qtd. retirada"
+            placeholderTextColor="#7a8491"
+            value={retiradas[item.id] || ''}
+            onChangeText={(valor) => atualizarRetirada(item.id, valor)}
+            keyboardType="numeric"
+          />
+
+          <TouchableOpacity
+            testID="btn-baixar"
+            style={[styles.botaoBaixar, baixando && styles.botaoDesativado]}
+            onPress={() => baixarMaterial(item)}
+            disabled={baixando || excluindo}
+            activeOpacity={0.82}
+          >
+            <Text style={styles.botaoAcaoTexto}>{baixando ? '...' : 'Baixar'}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            testID="btn-excluir"
+            style={[styles.botaoExcluir, excluindo && styles.botaoDesativado]}
+            onPress={() => excluirMaterial(item)}
+            disabled={baixando || excluindo}
+            activeOpacity={0.82}
+          >
+            <Text style={styles.botaoAcaoTexto}>{excluindo ? '...' : 'Excluir'}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -409,7 +538,6 @@ const styles = StyleSheet.create({
     paddingBottom: 22,
   },
   item: {
-    minHeight: 70,
     backgroundColor: '#ffffff',
     borderRadius: 8,
     paddingHorizontal: 14,
@@ -417,6 +545,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#d9e2ec',
     marginBottom: 10,
+  },
+  itemTopo: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -454,6 +584,46 @@ const styles = StyleSheet.create({
   },
   quantidadeTextoZerada: {
     color: '#be123c',
+  },
+  retiradaLinha: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 12,
+  },
+  inputRetirada: {
+    flex: 1,
+    minHeight: 42,
+    borderWidth: 1,
+    borderColor: '#bcccdc',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    color: '#102a43',
+    backgroundColor: '#f8fafc',
+    fontSize: 14,
+  },
+  botaoBaixar: {
+    minHeight: 42,
+    minWidth: 74,
+    borderRadius: 8,
+    backgroundColor: '#0f766e',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
+  botaoExcluir: {
+    minHeight: 42,
+    minWidth: 74,
+    borderRadius: 8,
+    backgroundColor: '#be123c',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
+  botaoAcaoTexto: {
+    color: '#ffffff',
+    fontWeight: '800',
+    fontSize: 13,
   },
   listaVazia: {
     color: '#627d98',
