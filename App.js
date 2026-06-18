@@ -162,8 +162,7 @@ export default function App() {
 
       const materialCriado = await resposta.json();
       setMateriais((listaAtual) => [materialCriado, ...listaAtual]);
-      setNome('');
-      setQuantidade('');
+      limparFormularioCadastro();
       setMensagem('Material cadastrado com sucesso.');
     } catch (error) {
       setMensagem('Erro ao cadastrar. Verifique a MockAPI.');
@@ -174,6 +173,11 @@ export default function App() {
 
   function atualizarQuantidade(valor) {
     setQuantidade(valor.replace(/\D/g, ''));
+  }
+
+  function limparFormularioCadastro() {
+    setNome('');
+    setQuantidade('');
   }
 
   function atualizarRetirada(id, valor) {
