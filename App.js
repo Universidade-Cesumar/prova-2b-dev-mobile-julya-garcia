@@ -187,6 +187,13 @@ export default function App() {
     }));
   }
 
+  function limparRetirada(id) {
+    setRetiradas((valoresAtuais) => ({
+      ...valoresAtuais,
+      [id]: '',
+    }));
+  }
+
   async function baixarMaterial(item) {
     const estoqueAtual = normalizarQuantidade(item.quantidade);
     const quantidadeRetirada = normalizarQuantidade(retiradas[item.id]);
@@ -223,10 +230,7 @@ export default function App() {
           material.id === item.id ? { ...materialAtualizado, ...materialSalvo } : material
         )
       );
-      setRetiradas((valoresAtuais) => ({
-        ...valoresAtuais,
-        [item.id]: '',
-      }));
+      limparRetirada(item.id);
       setMensagem('Baixa registrada com sucesso.');
     } catch (error) {
       setMensagem('Erro ao baixar estoque. Verifique a MockAPI.');
