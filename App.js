@@ -360,6 +360,7 @@ export default function App() {
 
           <TouchableOpacity
             testID="btn-cadastrar"
+            accessibilityLabel="Cadastrar material"
             style={[styles.botao, salvando && styles.botaoDesativado]}
             onPress={cadastrarMaterial}
             disabled={salvando}
