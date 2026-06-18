@@ -28,6 +28,11 @@ Tambem permite registrar baixa rapida de estoque e excluir materiais diretamente
 6. Em cada material, informe a quantidade de retirada e toque em `Baixar`.
 7. Use `Excluir` apenas quando o material deve ser removido da MockAPI.
 
+## Regra de negocio da baixa
+
+A baixa so e permitida quando a quantidade retirada e maior que zero e menor ou igual ao saldo atual do material.
+Essa regra impede que o estoque fique negativo.
+
 ## Tecnologias
 
 - React Native
