@@ -3,6 +3,7 @@
 Aplicativo mobile desenvolvido em React Native com Expo para controle inicial de estoque de materiais de enfermagem.
 
 O sistema permite visualizar o inventario atual em uma lista com rolagem, buscar materiais pelo nome e cadastrar novos insumos na MockAPI.
+Tambem permite registrar baixa rapida de estoque e excluir materiais diretamente pela lista.
 
 ## Funcionalidades
 
@@ -13,6 +14,9 @@ O sistema permite visualizar o inventario atual em uma lista com rolagem, buscar
 - Requisicao `POST` para enviar novos materiais para a MockAPI.
 - Totalizador de itens e unidades em estoque.
 - Funcao de validacao para retirada de estoque.
+- Baixa rapida de materiais com atualizacao por `PUT`.
+- Exclusao permanente de materiais com `DELETE`.
+- Bloqueio de retiradas invalidas para impedir estoque negativo.
 
 ## Uso basico
 
@@ -21,6 +25,8 @@ O sistema permite visualizar o inventario atual em uma lista com rolagem, buscar
 3. Digite o nome do material no campo de busca para filtrar a lista.
 4. Informe nome e quantidade para cadastrar um novo insumo.
 5. Confira o material novo aparecendo no topo da lista.
+6. Em cada material, informe a quantidade de retirada e toque em `Baixar`.
+7. Use `Excluir` apenas quando o material deve ser removido da MockAPI.
 
 ## Tecnologias
 
@@ -47,6 +53,18 @@ Campos enviados no cadastro:
   "quantidade": 50,
   "categoria": "Consumo"
 }
+```
+
+Na baixa de estoque, o aplicativo calcula a nova quantidade localmente e envia o material atualizado para:
+
+```text
+PUT https://6a2b396cb687a7d5cbc4fa03.mockapi.io/materiais/:id
+```
+
+Na exclusao, o aplicativo remove o registro pelo endpoint:
+
+```text
+DELETE https://6a2b396cb687a7d5cbc4fa03.mockapi.io/materiais/:id
 ```
 
 ## Como rodar
@@ -82,6 +100,7 @@ npm test
 ## Estrutura principal
 
 - `App.js`: tela principal com formulario, busca, totalizadores, GET e POST.
+- `App.js`: tambem concentra as acoes de baixa por `PUT` e exclusao por `DELETE`.
 - `src/utils/validacoes.js`: funcao `validarRetirada` usada para validar baixas de estoque.
 - `__tests__/`: testes automatizados das sprints.
 
@@ -93,10 +112,16 @@ Componentes obrigatorios implementados:
 - `TextInput` da quantidade: `testID="input-quantidade"` com `keyboardType="numeric"`
 - Botao de cadastro: `testID="btn-cadastrar"`
 - Lista de materiais: `testID="lista-materiais"`
+- Campo interno de retirada: `testID="input-retirada"`
+- Botao de baixa: `testID="btn-baixar"`
+- Botao de exclusao: `testID="btn-excluir"`
 
 ## Criterios atendidos
 
 - Interface mobile com campos obrigatorios e lista rolavel.
 - `useEffect` carregando o estoque com `GET` ao abrir o aplicativo.
 - Cadastro de material enviando JSON com `POST` para a MockAPI.
+- Baixa de estoque com `PUT`, atualizando servidor e interface.
+- Exclusao de material com `DELETE`, atualizando servidor e interface.
+- Validacao pura com `validarRetirada(estoqueAtual, quantidadeRetirada)`.
 - Documentacao com tecnologias, endpoint e instrucoes de execucao.
