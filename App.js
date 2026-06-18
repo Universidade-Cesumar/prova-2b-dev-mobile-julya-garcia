@@ -72,6 +72,18 @@ function obterStatusEstoque(quantidade) {
   return 'Disponivel';
 }
 
+function filtrarMateriaisPorBusca(materiais, busca) {
+  const termo = busca.trim().toLowerCase();
+
+  if (!termo) {
+    return materiais;
+  }
+
+  return materiais.filter((material) =>
+    String(material.nome || '').toLowerCase().includes(termo)
+  );
+}
+
 export default function App() {
   const [nome, setNome] = useState('');
   const [quantidade, setQuantidade] = useState('');
@@ -236,15 +248,7 @@ export default function App() {
   }
 
   const materiaisFiltrados = useMemo(() => {
-    const termo = busca.trim().toLowerCase();
-
-    if (!termo) {
-      return materiais;
-    }
-
-    return materiais.filter((material) =>
-      String(material.nome || '').toLowerCase().includes(termo)
-    );
+    return filtrarMateriaisPorBusca(materiais, busca);
   }, [busca, materiais]);
 
   const totalQuantidade = materiais.reduce(
