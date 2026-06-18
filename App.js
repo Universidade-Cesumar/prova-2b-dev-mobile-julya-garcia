@@ -31,6 +31,10 @@ function ordenarMateriais(lista) {
   return [...lista].sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
 }
 
+function montarUrlMaterial(id) {
+  return `${MOCKAPI_URL}/${id}`;
+}
+
 function obterStatusEstoque(quantidade) {
   if (quantidade === 0) {
     return 'Zerado';
@@ -151,7 +155,7 @@ export default function App() {
     setMensagem('');
 
     try {
-      const resposta = await fetch(`${MOCKAPI_URL}/${item.id}`, {
+      const resposta = await fetch(montarUrlMaterial(item.id), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -186,7 +190,7 @@ export default function App() {
     setMensagem('');
 
     try {
-      const resposta = await fetch(`${MOCKAPI_URL}/${item.id}`, {
+      const resposta = await fetch(montarUrlMaterial(item.id), {
         method: 'DELETE',
       });
 
