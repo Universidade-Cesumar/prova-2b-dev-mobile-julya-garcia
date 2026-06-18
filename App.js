@@ -35,6 +35,10 @@ function montarUrlMaterial(id) {
   return `${MOCKAPI_URL}/${id}`;
 }
 
+function temRetiradaInformada(valor) {
+  return normalizarQuantidade(valor) > 0;
+}
+
 function obterStatusEstoque(quantidade) {
   if (quantidade === 0) {
     return 'Zerado';
@@ -239,7 +243,7 @@ export default function App() {
     const quantidadeAtual = normalizarQuantidade(item.quantidade);
     const zerado = quantidadeAtual === 0;
     const statusEstoque = obterStatusEstoque(quantidadeAtual);
-    const retiradaInformada = normalizarQuantidade(retiradas[item.id]) > 0;
+    const retiradaInformada = temRetiradaInformada(retiradas[item.id]);
     const baixando = processandoItem === `baixar-${item.id}`;
     const excluindo = processandoItem === `excluir-${item.id}`;
 
