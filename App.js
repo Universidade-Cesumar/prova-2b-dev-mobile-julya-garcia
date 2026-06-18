@@ -52,6 +52,13 @@ function criarMaterialCadastro(nome, quantidade) {
   };
 }
 
+function criarMaterialAtualizado(item, quantidade) {
+  return {
+    ...item,
+    quantidade,
+  };
+}
+
 function obterStatusEstoque(quantidade) {
   if (quantidade === 0) {
     return 'Zerado';
@@ -159,10 +166,10 @@ export default function App() {
       return;
     }
 
-    const materialAtualizado = {
-      ...item,
-      quantidade: estoqueAtual - quantidadeRetirada,
-    };
+    const materialAtualizado = criarMaterialAtualizado(
+      item,
+      estoqueAtual - quantidadeRetirada
+    );
 
     setProcessandoItem(montarChaveProcessamento('baixar', item.id));
     setMensagem('');
