@@ -17,9 +17,10 @@ import { StatusBar } from 'expo-status-bar';
 const { validarRetirada } = require('./src/utils/validacoes');
 
 const MOCKAPI_URL = 'https://6a2b396cb687a7d5cbc4fa03.mockapi.io/materiais';
+const CATEGORIA_PADRAO = 'Consumo';
 
 const estoqueInicial = [
-  { id: 'demo-1', nome: 'Luva de procedimento', quantidade: 120, categoria: 'Consumo' },
+  { id: 'demo-1', nome: 'Luva de procedimento', quantidade: 120, categoria: CATEGORIA_PADRAO },
 ];
 
 function normalizarQuantidade(valor) {
@@ -103,7 +104,7 @@ export default function App() {
     const novoMaterial = {
       nome: nomeTratado,
       quantidade: quantidadeTratada,
-      categoria: 'Consumo',
+      categoria: CATEGORIA_PADRAO,
     };
 
     setSalvando(true);
