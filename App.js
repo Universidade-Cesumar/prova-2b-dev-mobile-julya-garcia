@@ -84,6 +84,13 @@ function filtrarMateriaisPorBusca(materiais, busca) {
   );
 }
 
+function somarQuantidadeMateriais(materiais) {
+  return materiais.reduce(
+    (total, material) => total + normalizarQuantidade(material.quantidade),
+    0
+  );
+}
+
 export default function App() {
   const [nome, setNome] = useState('');
   const [quantidade, setQuantidade] = useState('');
@@ -251,10 +258,7 @@ export default function App() {
     return filtrarMateriaisPorBusca(materiais, busca);
   }, [busca, materiais]);
 
-  const totalQuantidade = materiais.reduce(
-    (total, material) => total + normalizarQuantidade(material.quantidade),
-    0
-  );
+  const totalQuantidade = somarQuantidadeMateriais(materiais);
 
   const itensZerados = materiais.filter(
     (material) => normalizarQuantidade(material.quantidade) === 0
