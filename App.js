@@ -276,6 +276,7 @@ export default function App() {
             value={retiradas[item.id] || ''}
             onChangeText={(valor) => atualizarRetirada(item.id, valor)}
             keyboardType="numeric"
+            returnKeyType="done"
           />
 
           <TouchableOpacity
@@ -352,6 +353,7 @@ export default function App() {
             value={quantidade}
             onChangeText={atualizarQuantidade}
             keyboardType="numeric"
+            returnKeyType="done"
           />
 
           <TouchableOpacity
