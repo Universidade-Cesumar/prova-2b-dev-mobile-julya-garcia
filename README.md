@@ -32,6 +32,7 @@ Tambem permite registrar baixa rapida de estoque e excluir materiais diretamente
 
 A baixa so e permitida quando a quantidade retirada e maior que zero e menor ou igual ao saldo atual do material.
 Essa regra impede que o estoque fique negativo.
+Materiais com cinco unidades ou menos aparecem como baixo estoque na lista.
 
 ## Tecnologias
 
