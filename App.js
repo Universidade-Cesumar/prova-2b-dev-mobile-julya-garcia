@@ -39,6 +39,10 @@ function temRetiradaInformada(valor) {
   return normalizarQuantidade(valor) > 0;
 }
 
+function montarChaveProcessamento(acao, id) {
+  return `${acao}-${id}`;
+}
+
 function obterStatusEstoque(quantidade) {
   if (quantidade === 0) {
     return 'Zerado';
@@ -155,7 +159,7 @@ export default function App() {
       quantidade: estoqueAtual - quantidadeRetirada,
     };
 
-    setProcessandoItem(`baixar-${item.id}`);
+    setProcessandoItem(montarChaveProcessamento('baixar', item.id));
     setMensagem('');
 
     try {
@@ -190,7 +194,7 @@ export default function App() {
   }
 
   async function excluirMaterial(item) {
-    setProcessandoItem(`excluir-${item.id}`);
+    setProcessandoItem(montarChaveProcessamento('excluir', item.id));
     setMensagem('');
 
     try {
@@ -244,8 +248,8 @@ export default function App() {
     const zerado = quantidadeAtual === 0;
     const statusEstoque = obterStatusEstoque(quantidadeAtual);
     const retiradaInformada = temRetiradaInformada(retiradas[item.id]);
-    const baixando = processandoItem === `baixar-${item.id}`;
-    const excluindo = processandoItem === `excluir-${item.id}`;
+    const baixando = processandoItem === montarChaveProcessamento('baixar', item.id);
+    const excluindo = processandoItem === montarChaveProcessamento('excluir', item.id);
 
     return (
       <View style={styles.item}>
