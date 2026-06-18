@@ -239,6 +239,7 @@ export default function App() {
     const quantidadeAtual = normalizarQuantidade(item.quantidade);
     const zerado = quantidadeAtual === 0;
     const statusEstoque = obterStatusEstoque(quantidadeAtual);
+    const retiradaInformada = normalizarQuantidade(retiradas[item.id]) > 0;
     const baixando = processandoItem === `baixar-${item.id}`;
     const excluindo = processandoItem === `excluir-${item.id}`;
 
@@ -271,9 +272,12 @@ export default function App() {
 
           <TouchableOpacity
             testID="btn-baixar"
-            style={[styles.botaoBaixar, (baixando || zerado) && styles.botaoDesativado]}
+            style={[
+              styles.botaoBaixar,
+              (baixando || zerado || !retiradaInformada) && styles.botaoDesativado,
+            ]}
             onPress={() => baixarMaterial(item)}
-            disabled={baixando || excluindo || zerado}
+            disabled={baixando || excluindo || zerado || !retiradaInformada}
             activeOpacity={0.82}
           >
             <Text style={styles.botaoAcaoTexto}>{baixando ? '...' : 'Baixar'}</Text>
