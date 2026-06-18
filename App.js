@@ -210,6 +210,12 @@ export default function App() {
     );
   }
 
+  function removerMaterialLocal(id) {
+    setMateriais((listaAtual) =>
+      listaAtual.filter((material) => material.id !== id)
+    );
+  }
+
   async function baixarMaterial(item) {
     const estoqueAtual = normalizarQuantidade(item.quantidade);
     const quantidadeRetirada = normalizarQuantidade(retiradas[item.id]);
@@ -264,9 +270,7 @@ export default function App() {
         throw new Error('Nao foi possivel excluir o material.');
       }
 
-      setMateriais((listaAtual) =>
-        listaAtual.filter((material) => material.id !== item.id)
-      );
+      removerMaterialLocal(item.id);
       removerRetirada(item.id);
       setMensagem('Material excluido com sucesso.');
     } catch (error) {
