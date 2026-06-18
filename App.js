@@ -270,6 +270,7 @@ export default function App() {
         <View style={styles.retiradaLinha}>
           <TextInput
             testID="input-retirada"
+            accessibilityLabel={`Quantidade retirada de ${item.nome}`}
             style={styles.inputRetirada}
             placeholder="Qtd. retirada"
             placeholderTextColor="#7a8491"
