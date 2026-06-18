@@ -281,6 +281,7 @@ export default function App() {
 
           <TouchableOpacity
             testID="btn-baixar"
+            accessibilityLabel={`Baixar ${item.nome}`}
             style={[
               styles.botaoBaixar,
               (baixando || zerado || !retiradaInformada) && styles.botaoDesativado,
@@ -294,6 +295,7 @@ export default function App() {
 
           <TouchableOpacity
             testID="btn-excluir"
+            accessibilityLabel={`Excluir ${item.nome}`}
             style={[styles.botaoExcluir, excluindo && styles.botaoDesativado]}
             onPress={() => excluirMaterial(item)}
             disabled={baixando || excluindo}
