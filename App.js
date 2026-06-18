@@ -138,7 +138,7 @@ export default function App() {
     const quantidadeRetirada = normalizarQuantidade(retiradas[item.id]);
 
     if (!validarRetirada(estoqueAtual, quantidadeRetirada)) {
-      setMensagem('Retirada invalida. Confira a quantidade em estoque.');
+      setMensagem('Retirada invalida. Use uma quantidade entre 1 e o saldo em estoque.');
       return;
     }
 
