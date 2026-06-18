@@ -91,6 +91,12 @@ function somarQuantidadeMateriais(materiais) {
   );
 }
 
+function contarItensZerados(materiais) {
+  return materiais.filter(
+    (material) => normalizarQuantidade(material.quantidade) === 0
+  ).length;
+}
+
 export default function App() {
   const [nome, setNome] = useState('');
   const [quantidade, setQuantidade] = useState('');
@@ -260,9 +266,7 @@ export default function App() {
 
   const totalQuantidade = somarQuantidadeMateriais(materiais);
 
-  const itensZerados = materiais.filter(
-    (material) => normalizarQuantidade(material.quantidade) === 0
-  ).length;
+  const itensZerados = contarItensZerados(materiais);
 
   function renderMaterial({ item }) {
     const quantidadeAtual = normalizarQuantidade(item.quantidade);
