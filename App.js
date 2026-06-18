@@ -202,6 +202,14 @@ export default function App() {
     });
   }
 
+  function atualizarMaterialLocal(materialAtualizado) {
+    setMateriais((listaAtual) =>
+      listaAtual.map((material) =>
+        material.id === materialAtualizado.id ? materialAtualizado : material
+      )
+    );
+  }
+
   async function baixarMaterial(item) {
     const estoqueAtual = normalizarQuantidade(item.quantidade);
     const quantidadeRetirada = normalizarQuantidade(retiradas[item.id]);
@@ -233,11 +241,7 @@ export default function App() {
       }
 
       const materialSalvo = await resposta.json();
-      setMateriais((listaAtual) =>
-        listaAtual.map((material) =>
-          material.id === item.id ? { ...materialAtualizado, ...materialSalvo } : material
-        )
-      );
+      atualizarMaterialLocal({ ...materialAtualizado, ...materialSalvo });
       limparRetirada(item.id);
       setMensagem('Baixa registrada com sucesso.');
     } catch (error) {
