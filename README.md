@@ -28,6 +28,15 @@ Tambem permite registrar baixa rapida de estoque e excluir materiais diretamente
 6. Em cada material, informe a quantidade de retirada e toque em `Baixar`.
 7. Use `Excluir` apenas quando o material deve ser removido da MockAPI.
 
+## Roteiro de validacao final
+
+1. Cadastre `Seringa descartavel` com quantidade `15`.
+2. Pesquise por `Seringa descartavel` e confirme que o totalizador exibe um item.
+3. Retire `6` unidades e confirme que o saldo passa para `9`.
+4. Confira o alerta visual de estoque critico no material.
+5. Tente retirar uma quantidade maior que o saldo e confirme que a operacao e bloqueada.
+6. Exclua o material e confirme que ele desaparece da lista.
+
 ## Capturas de tela
 
 ### Dashboard do estoque
@@ -42,7 +51,7 @@ Tambem permite registrar baixa rapida de estoque e excluir materiais diretamente
 
 A baixa so e permitida quando a quantidade retirada e maior que zero e menor ou igual ao saldo atual do material.
 Essa regra impede que o estoque fique negativo.
-Materiais com cinco unidades ou menos aparecem como baixo estoque na lista.
+Materiais com menos de dez unidades aparecem como baixo estoque na lista.
 
 ## Tecnologias
 
@@ -133,6 +142,9 @@ Componentes obrigatorios implementados:
 - Campo interno de retirada: `testID="input-retirada"`
 - Botao de baixa: `testID="btn-baixar"`
 - Botao de exclusao: `testID="btn-excluir"`
+- Campo de busca: `testID="input-busca"`
+- Totalizador da busca: `testID="total-itens"`
+- Alerta de estoque critico: `accessibilityLabel="estoque-critico"`
 
 Esses identificadores sao mantidos exatamente como solicitado para o autograding.
 
