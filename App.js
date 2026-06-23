@@ -370,7 +370,7 @@ export default function App() {
           <View style={styles.resumoBloco}>
             <Text style={styles.resumoLabel}>Itens</Text>
             <Text testID="total-itens" style={styles.resumoValor}>
-              {materiais.length}
+              {materiaisFiltrados.length}
             </Text>
           </View>
           <View style={styles.resumoBloco}>
