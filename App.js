@@ -18,7 +18,7 @@ const { validarRetirada } = require('./src/utils/validacoes');
 
 const MOCKAPI_URL = 'https://6a2b396cb687a7d5cbc4fa03.mockapi.io/materiais';
 const CATEGORIA_PADRAO = 'Consumo';
-const LIMITE_BAIXO_ESTOQUE = 5;
+const LIMITE_ESTOQUE_CRITICO = 10;
 
 const estoqueInicial = [
   { id: 'demo-1', nome: 'Luva de procedimento', quantidade: 120, categoria: CATEGORIA_PADRAO },
@@ -65,7 +65,7 @@ function obterStatusEstoque(quantidade) {
     return 'Zerado';
   }
 
-  if (quantidade <= LIMITE_BAIXO_ESTOQUE) {
+  if (quantidade < LIMITE_ESTOQUE_CRITICO) {
     return 'Baixo estoque';
   }
 
