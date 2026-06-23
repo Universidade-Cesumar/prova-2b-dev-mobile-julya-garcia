@@ -365,89 +365,6 @@ export default function App() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.container}
       >
-        <View style={styles.header}>
-          <Text style={styles.title}>Almoxarifado</Text>
-          <Text style={styles.subtitle}>Enfermagem</Text>
-        </View>
-
-        <View style={styles.resumo}>
-          <View style={styles.resumoBloco}>
-            <Text style={styles.resumoLabel}>Itens</Text>
-            <Text testID="total-itens" style={styles.resumoValor}>
-              {materiaisFiltrados.length}
-            </Text>
-          </View>
-          <View style={styles.resumoBloco}>
-            <Text style={styles.resumoLabel}>Unidades</Text>
-            <Text style={styles.resumoValor}>{totalQuantidade}</Text>
-          </View>
-          <View style={styles.resumoBloco}>
-            <Text style={styles.resumoLabel}>Zerados</Text>
-            <Text style={[styles.resumoValor, styles.resumoAlerta]}>{itensZerados}</Text>
-          </View>
-        </View>
-
-        <View style={styles.formulario}>
-          <TextInput
-            testID="input-nome"
-            style={styles.input}
-            placeholder="Nome do material"
-            placeholderTextColor="#7a8491"
-            value={nome}
-            onChangeText={setNome}
-          />
-
-          <TextInput
-            testID="input-quantidade"
-            style={styles.input}
-            placeholder="Quantidade"
-            placeholderTextColor="#7a8491"
-            value={quantidade}
-            onChangeText={atualizarQuantidade}
-            keyboardType="numeric"
-            returnKeyType="done"
-          />
-
-          <TouchableOpacity
-            testID="btn-cadastrar"
-            accessibilityLabel="Cadastrar material"
-            style={[styles.botao, salvando && styles.botaoDesativado]}
-            onPress={cadastrarMaterial}
-            disabled={salvando}
-            activeOpacity={0.82}
-          >
-            <Text style={styles.botaoTexto}>{salvando ? 'Cadastrando...' : 'Cadastrar'}</Text>
-          </TouchableOpacity>
-        </View>
-
-        <TextInput
-          testID="input-busca"
-          style={styles.inputBusca}
-          placeholder="Buscar material"
-          placeholderTextColor="#7a8491"
-          value={busca}
-          onChangeText={setBusca}
-        />
-
-        <Text style={styles.resultadoBusca}>
-          Mostrando {materiaisFiltrados.length} de {materiais.length} material(is).
-        </Text>
-
-        {mensagem ? <Text style={styles.mensagem}>{mensagem}</Text> : null}
-
-        {itensZerados > 0 ? (
-          <Text style={styles.alertaEstoque}>
-            {itensZerados} item(ns) precisam de reposicao.
-          </Text>
-        ) : null}
-
-        {carregando ? (
-          <View style={styles.loadingLinha}>
-            <ActivityIndicator color="#0f766e" />
-            <Text style={styles.loadingTexto}>Carregando estoque...</Text>
-          </View>
-        ) : null}
-
         <View testID="lista-materials" style={styles.listaCompatibilidade}>
           <FlatList
             testID="lista-materiais"
@@ -455,6 +372,97 @@ export default function App() {
             keyExtractor={(item, index) => String(item.id || index)}
             renderItem={renderMaterial}
             contentContainerStyle={styles.listaConteudo}
+            keyboardShouldPersistTaps="handled"
+            ListHeaderComponent={
+              <>
+                <View style={styles.header}>
+                  <Text style={styles.title}>Almoxarifado</Text>
+                  <Text style={styles.subtitle}>Enfermagem</Text>
+                </View>
+
+                <View style={styles.resumo}>
+                  <View style={styles.resumoBloco}>
+                    <Text style={styles.resumoLabel}>Itens</Text>
+                    <Text testID="total-itens" style={styles.resumoValor}>
+                      {materiaisFiltrados.length}
+                    </Text>
+                  </View>
+                  <View style={styles.resumoBloco}>
+                    <Text style={styles.resumoLabel}>Unidades</Text>
+                    <Text style={styles.resumoValor}>{totalQuantidade}</Text>
+                  </View>
+                  <View style={styles.resumoBloco}>
+                    <Text style={styles.resumoLabel}>Zerados</Text>
+                    <Text style={[styles.resumoValor, styles.resumoAlerta]}>
+                      {itensZerados}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.formulario}>
+                  <TextInput
+                    testID="input-nome"
+                    style={styles.input}
+                    placeholder="Nome do material"
+                    placeholderTextColor="#7a8491"
+                    value={nome}
+                    onChangeText={setNome}
+                  />
+
+                  <TextInput
+                    testID="input-quantidade"
+                    style={styles.input}
+                    placeholder="Quantidade"
+                    placeholderTextColor="#7a8491"
+                    value={quantidade}
+                    onChangeText={atualizarQuantidade}
+                    keyboardType="numeric"
+                    returnKeyType="done"
+                  />
+
+                  <TouchableOpacity
+                    testID="btn-cadastrar"
+                    accessibilityLabel="Cadastrar material"
+                    style={[styles.botao, salvando && styles.botaoDesativado]}
+                    onPress={cadastrarMaterial}
+                    disabled={salvando}
+                    activeOpacity={0.82}
+                  >
+                    <Text style={styles.botaoTexto}>
+                      {salvando ? 'Cadastrando...' : 'Cadastrar'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                <TextInput
+                  testID="input-busca"
+                  style={styles.inputBusca}
+                  placeholder="Buscar material"
+                  placeholderTextColor="#7a8491"
+                  value={busca}
+                  onChangeText={setBusca}
+                />
+
+                <Text style={styles.resultadoBusca}>
+                  Mostrando {materiaisFiltrados.length} de {materiais.length} material(is).
+                </Text>
+
+                {mensagem ? <Text style={styles.mensagem}>{mensagem}</Text> : null}
+
+                {itensZerados > 0 ? (
+                  <Text style={styles.alertaEstoque}>
+                    {itensZerados} item(ns) precisam de reposicao.
+                  </Text>
+                ) : null}
+
+                {carregando ? (
+                  <View style={styles.loadingLinha}>
+                    <ActivityIndicator color="#0f766e" />
+                    <Text style={styles.loadingTexto}>Carregando estoque...</Text>
+                  </View>
+                ) : null}
+              </>
+            }
             refreshControl={
               <RefreshControl
                 refreshing={carregando}
