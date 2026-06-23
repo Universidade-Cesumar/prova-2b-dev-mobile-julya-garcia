@@ -29,8 +29,23 @@ function normalizarQuantidade(valor) {
   return Number.isFinite(numero) ? numero : 0;
 }
 
+function corrigirNomeMaterial(nome) {
+  const nomeOriginal = String(nome || '');
+
+  if (/^Pin.a anatomica$/i.test(nomeOriginal)) {
+    return 'Pin\u00e7a anat\u00f4mica';
+  }
+
+  return nomeOriginal;
+}
+
 function ordenarMateriais(lista) {
-  return [...lista].sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
+  return lista
+    .map((material) => ({
+      ...material,
+      nome: corrigirNomeMaterial(material.nome),
+    }))
+    .sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
 }
 
 function montarUrlMaterial(id) {
