@@ -28,6 +28,16 @@ Tambem permite registrar baixa rapida de estoque e excluir materiais diretamente
 6. Em cada material, informe a quantidade de retirada e toque em `Baixar`.
 7. Use `Excluir` apenas quando o material deve ser removido da MockAPI.
 
+## Capturas de tela
+
+### Dashboard do estoque
+
+![Dashboard do almoxarifado](docs/screenshots/dashboard.png)
+
+### Busca e alerta de estoque critico
+
+![Busca com item em estoque critico](docs/screenshots/busca-estoque-critico.png)
+
 ## Regra de negocio da baixa
 
 A baixa so e permitida quando a quantidade retirada e maior que zero e menor ou igual ao saldo atual do material.
