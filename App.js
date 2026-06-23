@@ -299,7 +299,7 @@ export default function App() {
 
     return (
       <View
-        style={styles.item}
+        style={[styles.item, estoqueCritico && styles.itemCritico]}
         accessibilityLabel={estoqueCritico ? 'estoque-critico' : undefined}
       >
         <View style={styles.itemTopo}>
@@ -616,6 +616,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#d9e2ec',
     marginBottom: 10,
+  },
+  itemCritico: {
+    backgroundColor: '#fff1f2',
+    borderColor: '#fb7185',
   },
   itemTopo: {
     flexDirection: 'row',
