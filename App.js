@@ -291,13 +291,17 @@ export default function App() {
   function renderMaterial({ item }) {
     const quantidadeAtual = normalizarQuantidade(item.quantidade);
     const zerado = quantidadeAtual === 0;
+    const estoqueCritico = quantidadeAtual < LIMITE_ESTOQUE_CRITICO;
     const statusEstoque = obterStatusEstoque(quantidadeAtual);
     const retiradaInformada = temRetiradaInformada(retiradas[item.id]);
     const baixando = processandoItem === montarChaveProcessamento('baixar', item.id);
     const excluindo = processandoItem === montarChaveProcessamento('excluir', item.id);
 
     return (
-      <View style={styles.item}>
+      <View
+        style={styles.item}
+        accessibilityLabel={estoqueCritico ? 'estoque-critico' : undefined}
+      >
         <View style={styles.itemTopo}>
           <View style={styles.itemTextos}>
             <Text style={styles.itemNome}>{item.nome}</Text>
